@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../Mango.Coupon.Api/Mango.CouponAPI/Mango.CouponAPI.csproj" />
+  <Project Path="Mango.Presentation/Mango.Presentation.csproj" />
+</Solution>
