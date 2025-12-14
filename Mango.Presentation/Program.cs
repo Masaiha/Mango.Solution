@@ -1,4 +1,18 @@
+using Mango.Presentation.Interfaces;
+using Mango.Presentation.Services;
+using Mango.Presentation.Utils;
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<IBaseService, BaseService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
+
+SD.CouponApiBase = builder.Configuration["ServiceUrls:CouponAPI"];
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -22,5 +36,9 @@ app.UseAuthorization();
 app.MapStaticAssets();
 app.MapRazorPages()
    .WithStaticAssets();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Coupons}/{action=Index}/{id?}");
 
 app.Run();
