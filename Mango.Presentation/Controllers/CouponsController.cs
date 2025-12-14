@@ -1,5 +1,8 @@
 ﻿using Mango.Presentation.Interfaces;
+using Mango.Presentation.Models.Dtos;
+using Mango.Presentation.Utils;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Mango.Presentation.Controllers
 {
@@ -22,6 +25,9 @@ namespace Mango.Presentation.Controllers
         public async Task<IActionResult> GetAll()
         {
             var coupons = await _service.GetAll();
+
+            var teste = JsonUtils.Deserialize<List<CouponsDto>>(coupons.Result?.ToString());
+
 
             return Ok(coupons);
         }
