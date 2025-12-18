@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="../Mango.Coupon.Api/Mango.CouponAPI/Mango.CouponAPI.csproj" />
   <Project Path="Mango.Presentation/Mango.Presentation.csproj" />
+  <Project Path="Mango.Services.Auth/Mango.Services.Auth.csproj" Id="49ee0a57-d7bf-4c4e-8d79-615a460d8695" />
 </Solution>
