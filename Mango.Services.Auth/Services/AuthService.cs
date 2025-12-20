@@ -12,12 +12,14 @@ namespace Mango.Services.Auth.Services
         private readonly HttpClient _httpClient;AppDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-        public AuthService(AppDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AuthService(AppDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IJwtTokenGenerator jwtTokenGenerator)
         {
             _db = db;
             _roleManager = roleManager;
             _userManager = userManager;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
 
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
@@ -31,6 +33,8 @@ namespace Mango.Services.Auth.Services
                 return new LoginResponseDto() { User = null, Token = "" };
             }
 
+            var token = _jwtTokenGenerator.GenerateToken(user);
+
             UserDto userDto = new UserDto()
             {
                 Id = user.Id,
@@ -42,7 +46,7 @@ namespace Mango.Services.Auth.Services
             LoginResponseDto loginResponseDto = new LoginResponseDto()
             {
                 User = System.Text.Json.JsonSerializer.Serialize(userDto),
-                Token = "" // Token generation logic can be added here
+                Token = token
             };
 
             return loginResponseDto;
@@ -87,6 +91,25 @@ namespace Mango.Services.Auth.Services
             {
                 return "Error encountered";
             }
+        }
+
+        public async Task<bool> AssignRole(string email, string roleName)
+        {
+            // Busca o usuário de forma otimizada pelo UserManager
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null) return false;
+
+            // Verifica se a Role existe de forma verdadeiramente assíncrona
+            if (!await _roleManager.RoleExistsAsync(roleName))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+
+            // Adiciona o usuário à Role
+            var result = await _userManager.AddToRoleAsync(user, roleName);
+
+            return result.Succeeded;
         }
     }
 
