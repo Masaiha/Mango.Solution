@@ -1,19 +1,19 @@
 using Mango.Services.Auth.Datas;
+using Mango.Services.Auth.Interfaces;
 using Mango.Services.Auth.Models;
+using Mango.Services.Auth.Models.Dto;
+using Mango.Services.Auth.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-// Add services to the container.
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var conx = builder.Configuration.GetConnectionString("DefaultConnection");
-    
-    builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 
     options.UseSqlServer(conx,
         sqlServerOptionsAction: sqlOptions =>
@@ -27,8 +27,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             // ===========================
         });
 });
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ResponseDto>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
