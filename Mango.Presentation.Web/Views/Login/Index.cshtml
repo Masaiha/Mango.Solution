@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    var error = ViewBag.ErrorMessage as string;
+    var success = ViewBag.SuccessMessage as string;
+    var previousUser = ViewBag.UserName as string ?? string.Empty;
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2>Login</h2>
+
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alert alert-danger">@error</div>
+        }
+
+        @if (!string.IsNullOrEmpty(success))
+        {
+            <div class="alert alert-success">@success</div>
+        }
+
+        <form asp-action="SignIn" method="post">
+            <div class="mb-3">
+                <label for="UserName" class="form-label">User</label>
+                <input id="UserName" name="UserName" class="form-control" value="@previousUser" />
+            </div>
+
+            <div class="mb-3">
+                <label for="Password" class="form-label">Password</label>
+                <input id="Password" name="Password" type="password" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Sign in</button>
+        </form>
+    </div>
+</div>
